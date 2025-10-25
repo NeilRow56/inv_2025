@@ -1,7 +1,12 @@
+import CheckBoxAndOthers from '@/components/form/form-rhf-checkbox-example'
+import { FormRhfSelect } from '@/components/form/form-rhf-select-example'
+
 export default function Home() {
   return (
-    <div className='grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-(family-name:--font-geist-sans) sm:p-20'>
-      Home Page
+    <div className='container mx-auto flex h-dvh flex-col items-center justify-center space-y-12'>
+      <FormRhfSelect />
+
+      <CheckBoxAndOthers />
     </div>
   )
 }
