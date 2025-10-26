@@ -32,7 +32,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { SelectItem } from '@/components/ui/select'
-import { createProject } from '@/server/project'
+import { createProject } from '@/server-actions/project'
 import { PROJECT_STATUSES, projectSchema } from '@/zod-schemas/project'
 
 import { zodResolver } from '@hookform/resolvers/zod'

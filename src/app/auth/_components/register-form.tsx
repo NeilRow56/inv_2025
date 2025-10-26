@@ -18,6 +18,9 @@ import {
 import { Field, FieldGroup } from '@/components/ui/field'
 
 import { FormInput, FormPasswordInput } from '@/components/form/form-base'
+import { signUp } from '@/server-actions/users'
+import { LoadingSwap } from '@/components/shared/loading-swap'
+import { useRouter } from 'next/navigation'
 
 const registerSchema = z
   .object({
@@ -45,7 +48,8 @@ interface RegisterFormProps {
   onSuccess?: () => void
 }
 
-export function RegisterForm() {
+export function RegisterForm({ onSuccess }: RegisterFormProps) {
+  const router = useRouter()
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -56,21 +60,24 @@ export function RegisterForm() {
     }
   })
 
-  function onSubmit(data: z.infer<typeof registerSchema>) {
-    toast('You submitted the following values:', {
-      description: (
-        <pre className='bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4'>
-          <code>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-      position: 'bottom-right',
-      classNames: {
-        content: 'flex flex-col gap-2'
-      },
-      style: {
-        '--border-radius': 'calc(var(--radius)  + 4px)'
-      } as React.CSSProperties
-    })
+  const { isSubmitting } = form.formState
+
+  async function onSubmit(values: RegisterSchemaType) {
+    const { success, message } = await signUp(
+      values.email,
+      values.password,
+      values.name
+    )
+
+    if (success) {
+      toast.success(`${message as string} `)
+      router.push('/dashboard')
+      if (onSuccess) {
+        onSuccess()
+      }
+    } else {
+      toast.error(message as string)
+    }
   }
 
   return (
@@ -97,13 +104,24 @@ export function RegisterForm() {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className='max-w-[320px]'>
         <Field orientation='horizontal'>
-          <Button type='button' variant='outline' onClick={() => form.reset()}>
-            Reset
+          <Button
+            type='submit'
+            form='registration-form'
+            className='w-full cursor-pointer dark:bg-blue-600 dark:text-white'
+            disabled={isSubmitting}
+          >
+            <LoadingSwap isLoading={isSubmitting}>Sign in</LoadingSwap>
           </Button>
-          <Button type='submit' form='registration-form'>
-            Submit
+          <Button
+            className='border-red-500'
+            type='button'
+            form='registration-form'
+            variant='outline'
+            onClick={() => form.reset()}
+          >
+            Reset
           </Button>
         </Field>
       </CardFooter>

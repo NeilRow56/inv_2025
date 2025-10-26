@@ -1,12 +1,20 @@
 'use client'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LoginForm } from './login-form'
 import { RegisterForm } from './register-form'
+import { useRouter } from 'next/navigation'
+import { getSession } from '@/lib/auth-client'
 
 function AuthLayoutComponent() {
   const [activeTab, setActiveTab] = useState('login')
+  const router = useRouter()
+  useEffect(() => {
+    getSession().then(session => {
+      if (session.data !== null) router.push('/')
+    })
+  }, [router])
 
   return (
     <div className='flex min-h-[80vh] items-center justify-center'>
